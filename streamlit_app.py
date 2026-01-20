@@ -6,6 +6,7 @@ from PIL import Image
 try:
     api_key = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=api_key)
+    st.write([m.name for m in genai.list_models()])   
 except:
     st.error("Missing API Key! Add it to Streamlit Secrets.")
     st.stop()
