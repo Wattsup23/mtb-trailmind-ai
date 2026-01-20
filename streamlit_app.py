@@ -45,7 +45,30 @@ if uploaded_file:
                 ])
                 st.markdown(response.text)
                 st.divider()
+# --- PASTE PHASE 3 CODE STARTING HERE ---
+st.sidebar.divider()
+st.sidebar.header("🍴 Route Chef")
+location = st.sidebar.text_input("Where are you riding?", placeholder="e.g. Bentonville, AR")
+conditions = st.sidebar.selectbox("Trail Conditions", ["Hero Dirt", "Dry/Dusty", "Muddy/Sloppy", "Loose over Hard"])
 
+if st.sidebar.button("Cook My Setup"):
+    if location:
+        with st.chat_message("assistant"):
+            with st.spinner(f"Checking trail reports for {location}..."):
+                chef_prompt = f"""
+                Act as a local MTB guide in {location}. 
+                The current conditions are {conditions}.
+                1. Recommend 1 famous trail in this area that suits these conditions.
+                2. Suggest the ideal Tire Pressure (Front/Rear) for a 180lb rider.
+                3. Suggest Suspension feel (Firm/Plush) and Rebound speed.
+                4. Give one 'Local Tip' about the terrain.
+                """
+                response = model.generate_content(chef_prompt)
+                st.markdown(f"### 🥣 Trail Recommendation: {location}")
+                st.markdown(response.text)
+    else:
+        st.sidebar.warning("Please enter a location first!")
+# --- END OF PHASE 3 CODE ---
 # 4. Chat Interface
 if "messages" not in st.session_state:
     st.session_state.messages = []
