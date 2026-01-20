@@ -2,39 +2,51 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# 1. Secure API Connection
+# 1. Setup
 try:
     api_key = st.secrets["GEMINI_API_KEY"]
-    genai.configure(api_key=api_key)  
+    genai.configure(api_key=api_key)
 except:
-    st.error("Missing API Key! Add it to Streamlit Secrets.")
+    st.error("Missing API Key!")
     st.stop()
 
-st.set_page_config(page_title="TrailMind AI", page_icon="🚲", layout="wide")
-st.title("🚲 TrailMind AI: Brain & Eyes")
+st.set_page_config(page_title="TrailMind AI", page_icon="🚲")
+st.title("🚲 TrailMind AI: Expert Mode")
 
-# 2. Expert Personality Setup
+# 2. Setup the "Master Mechanic" with Gemini 2.5
+# We use specific instructions to force accuracy.
 model = genai.GenerativeModel(
     model_name='models/gemini-2.5-flash',
-    system_instruction="You are 'TrailMind AI,' a master mountain bike mechanic. You help riders identify parts, check for wear, and provide torque specs."
+    system_instruction="""You are a Master Mountain Bike Mechanic. 
+    When identifying parts:
+    - State the Brand and Model clearly.
+    - Check for specific mechanical issues (wear, alignment, dirt).
+    - Provide exact torque specs in Nm.
+    - If you aren't 100% sure of the model, list the 2 most likely options."""
 )
 
-# 3. Sidebar: The Diagnostic Center
+# 3. Sidebar Diagnostic
 st.sidebar.header("📸 Diagnostic Center")
 uploaded_file = st.sidebar.file_uploader("Upload a photo of a bike part", type=['jpg', 'jpeg', 'png'])
 
 if uploaded_file:
     img = Image.open(uploaded_file)
-    st.sidebar.image(img, caption="Analyzing this part...", use_container_width=True)
+    # Fixed the 'use_container_width' warning here:
+    st.sidebar.image(img, caption="Part to inspect", width=None) 
     
     if st.sidebar.button("Analyze Gear"):
         with st.chat_message("assistant"):
-            with st.spinner("Inspecting your bike..."):
-                response = model.generate_content(["Identify this MTB part.", img])
+            with st.spinner("Analyzing high-res details..."):
+                # We ask the model to look specifically for logos and teeth wear
+                response = model.generate_content([
+                    "Identify this MTB part. Look at the logos and text on the part. "
+                    "Tell me the brand, model, and if you see any signs of wear or damage.", 
+                    img
+                ])
                 st.markdown(response.text)
                 st.divider()
 
-# 4. Standard Chat Interface
+# 4. Chat Interface
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
