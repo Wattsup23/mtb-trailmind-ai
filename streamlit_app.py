@@ -2,39 +2,40 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# 1. Access the secret key
+# 1. Secure API Connection
 try:
     api_key = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=api_key)
 except:
-    st.error("API Key not found in Streamlit Secrets!")
+    st.error("Missing API Key! Add it to Streamlit Secrets.")
     st.stop()
 
-st.set_page_config(page_title="TrailMind AI", page_icon="🚲")
+st.set_page_config(page_title="TrailMind AI", page_icon="🚲", layout="wide")
 st.title("🚲 TrailMind AI: Brain & Eyes")
 
-# 2. Setup the Expert Model
+# 2. Expert Personality Setup
 model = genai.GenerativeModel(
     model_name='gemini-1.5-flash',
-    system_instruction="You are 'TrailMind AI,' a master MTB mechanic. You identify parts from photos and give technical maintenance advice."
+    system_instruction="You are 'TrailMind AI,' a master mountain bike mechanic. You help riders identify parts, check for wear, and provide torque specs."
 )
 
-# 3. Sidebar for Image Uploads (The Eyes)
-st.sidebar.header("Identify a Part")
-uploaded_file = st.sidebar.file_uploader("Upload a photo of your bike part", type=['jpg', 'jpeg', 'png'])
+# 3. Sidebar: The Diagnostic Center
+st.sidebar.header("📸 Diagnostic Center")
+uploaded_file = st.sidebar.file_uploader("Upload a photo of a bike part", type=['jpg', 'jpeg', 'png'])
 
 if uploaded_file:
     img = Image.open(uploaded_file)
-    st.sidebar.image(img, caption="Part to analyze", use_container_width=True)
-    if st.sidebar.button("Analyze Photo"):
-        with st.spinner("Analyzing your gear..."):
-            # Sends image + text prompt to the AI
-            response = model.generate_content(["Identify this MTB part and tell me common maintenance or torque specs for it.", img])
-            st.write("### AI Analysis of your Photo:")
-            st.write(response.text)
-            st.divider()
+    st.sidebar.image(img, caption="Analyzing this part...", use_container_width=True)
+    
+    if st.sidebar.button("Analyze Gear"):
+        with st.chat_message("assistant"):
+            with st.spinner("Inspecting your bike..."):
+                # Sends the image + the text prompt to the AI
+                response = model.generate_content(["Identify this mountain bike part. Tell me exactly what it is, common signs of wear to look for, and any standard torque specs if applicable.", img])
+                st.markdown(response.text)
+                st.divider()
 
-# 4. Chat Interface (The Brain)
+# 4. Standard Chat Interface
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -46,7 +47,6 @@ if prompt := st.chat_input("Ask a tech question..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
-
     with st.chat_message("assistant"):
         response = model.generate_content(prompt)
         st.markdown(response.text)
