@@ -5,8 +5,7 @@ from PIL import Image
 # 1. Secure API Connection
 try:
     api_key = st.secrets["GEMINI_API_KEY"]
-    genai.configure(api_key=api_key)
-    st.write([m.name for m in genai.list_models()])   
+    genai.configure(api_key=api_key)  
 except:
     st.error("Missing API Key! Add it to Streamlit Secrets.")
     st.stop()
@@ -16,7 +15,7 @@ st.title("🚲 TrailMind AI: Brain & Eyes")
 
 # 2. Expert Personality Setup
 model = genai.GenerativeModel(
-    model_name='models/gemini-1.5-flash-latest',
+    model_name='models/gemini-2.0-flash',
     system_instruction="You are 'TrailMind AI,' a master mountain bike mechanic. You help riders identify parts, check for wear, and provide torque specs."
 )
 
