@@ -15,7 +15,7 @@ st.title("🚲 TrailMind AI: Brain & Eyes")
 
 # 2. Expert Personality Setup
 model = genai.GenerativeModel(
-    model_name='models/gemini-1.5-flash',
+    model_name='gemini-1.5-flash',
     system_instruction="You are 'TrailMind AI,' a master mountain bike mechanic. You help riders identify parts, check for wear, and provide torque specs."
 )
 
