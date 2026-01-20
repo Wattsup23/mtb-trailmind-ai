@@ -31,6 +31,7 @@ if uploaded_file:
         with st.chat_message("assistant"):
             with st.spinner("Inspecting your bike..."):
                 # Sends the image + the text prompt to the AI
+                # Replace your current Line 34 with this:
                 response = model.generate_content(["Identify this mountain bike part. Tell me exactly what it is, common signs of wear to look for, and any standard torque specs if applicable.", img])
                 st.markdown(response.text)
                 st.divider()
