@@ -32,7 +32,7 @@ uploaded_file = st.sidebar.file_uploader("Upload a photo of a bike part", type=[
 if uploaded_file:
     img = Image.open(uploaded_file)
     # Fixed the 'use_container_width' warning here:
-    st.sidebar.image(img, caption="Part to inspect", width=None) 
+    st.sidebar.image(img, caption="Part to inspect", width="stretch") 
     
     if st.sidebar.button("Analyze Gear"):
         with st.chat_message("assistant"):
