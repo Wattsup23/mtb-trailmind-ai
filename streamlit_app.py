@@ -1,28 +1,35 @@
 import streamlit as st
+import google.generativeai as genai
 
-# Setup the App Identity
+# 1. Access the secret key we just saved
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+    genai.configure(api_key=api_key)
+except:
+    st.error("API Key not found. Please add it to Streamlit Secrets!")
+    st.stop()
+
 st.set_page_config(page_title="TrailMind AI", page_icon="🚲")
+st.title("🚲 TrailMind AI: The Brain")
 
-st.title("🚲 TrailMind AI: Phase 1")
-st.subheader("Your AI Mountain Bike Specialist")
+# 2. Set the "MTB Expert" Personality
+model = genai.GenerativeModel('gemini-1.5-flash', 
+                              system_instruction="You are TrailMind, an expert mountain bike mechanic and trail guide. You provide technical, safe, and encouraging advice.")
 
-# Initializing the Chat Interface
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Displaying previous chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Handling User Input
-if prompt := st.chat_input("Ask about bike maintenance or local trails..."):
+if prompt := st.chat_input("Ask a tech question (e.g., 'How do I bleed Shimano brakes?')"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        # This is where we will later connect the high-level AI logic
-        response = f"I'm currently in Phase 1 setup. You asked about: '{prompt}'. Soon, I'll be able to pull specific torque specs and trail conditions for you!"
-        st.markdown(response)
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        # 3. Get the real AI response
+        response = model.generate_content(prompt)
+        st.markdown(response.text)
+        st.session_state.messages.append({"role": "assistant", "content": response.text})
