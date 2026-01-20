@@ -15,7 +15,7 @@ st.title("🚲 TrailMind AI: Brain & Eyes")
 
 # 2. Expert Personality Setup
 model = genai.GenerativeModel(
-    model_name='gemini-1.5-pro',
+    model_name='models/gemini-1.5-flash-latest',
     system_instruction="You are 'TrailMind AI,' a master mountain bike mechanic. You help riders identify parts, check for wear, and provide torque specs."
 )
 
@@ -30,7 +30,6 @@ if uploaded_file:
     if st.sidebar.button("Analyze Gear"):
         with st.chat_message("assistant"):
             with st.spinner("Inspecting your bike..."):
-            # This line must be indented further than the 'with' above
                 response = model.generate_content(["Identify this MTB part.", img])
                 st.markdown(response.text)
                 st.divider()
