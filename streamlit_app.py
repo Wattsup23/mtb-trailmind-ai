@@ -30,11 +30,10 @@ if uploaded_file:
     if st.sidebar.button("Analyze Gear"):
         with st.chat_message("assistant"):
             with st.spinner("Inspecting your bike..."):
-                # This version ensures the image is formatted correctly for the AI
-                response = model.generate_content(
-                    contents=["Identify this MTB part and give tech advice.", img]
-                )
+            # This line must be indented further than the 'with' above
+                response = model.generate_content(["Identify this MTB part.", img])
                 st.markdown(response.text)
+                st.divider()
 
 # 4. Standard Chat Interface
 if "messages" not in st.session_state:
