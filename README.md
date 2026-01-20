@@ -1,19 +1,28 @@
-# 🎈 Blank app template
+import streamlit as st
 
-A simple Streamlit app template for you to modify!
+# Setup the App Identity
+st.set_page_config(page_title="TrailMind AI", page_icon="🚲")
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+st.title("🚲 TrailMind AI: Phase 1")
+st.subheader("Your AI Mountain Bike Specialist")
 
-### How to run it on your own machine
+# Initializing the Chat Interface
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-1. Install the requirements
+# Displaying previous chat history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-   ```
-   $ pip install -r requirements.txt
-   ```
+# Handling User Input
+if prompt := st.chat_input("Ask about bike maintenance or local trails..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-2. Run the app
-
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+    with st.chat_message("assistant"):
+        # This is where we will later connect the high-level AI logic
+        response = f"I'm currently in Phase 1 setup. You asked about: '{prompt}'. Soon, I'll be able to pull specific torque specs and trail conditions for you!"
+        st.markdown(response)
+        st.session_state.messages.append({"role": "assistant", "content": response})
